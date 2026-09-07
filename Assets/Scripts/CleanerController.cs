@@ -28,7 +28,7 @@ public class CleanerController : Agent
     public void Reset()
     {
         transform.SetPositionAndRotation(startingPosition, startingRotation);
-        //Trash.GetComponent<TrashRespawn>().Respawn();
+        Trash.GetComponent<TrashRespawn>().Respawn();
 
         Rigidbody body = GetComponent<Rigidbody>();
         if (body != null)
@@ -83,6 +83,8 @@ public class CleanerController : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        AddReward(-0.001f); // Small penalty to encourage efficiency
+
         int movementAction =actions.DiscreteActions[0];
         int rotationAction = actions.DiscreteActions[1];
 

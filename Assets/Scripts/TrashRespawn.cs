@@ -46,5 +46,11 @@ public class TrashRespawn : MonoBehaviour
         {
             cleaner.CollectTrash();
         }
+
+        if(collision.gameObject.CompareTag("wall"))
+        {
+            Debug.Log("Trash collided with wall, respawning.");
+            Respawn();
+        }
     }
 }
