@@ -2,22 +2,22 @@
     "RobotBrain": {
         "checkpoints": [
             {
-                "steps": 399263,
-                "file_path": "results\\Stage3\\RobotBrain\\RobotBrain-399263.onnx",
-                "reward": 0.8335414352667266,
-                "creation_time": 1788770894.0371687,
+                "steps": 346087,
+                "file_path": "results\\Stage3\\RobotBrain\\RobotBrain-346087.onnx",
+                "reward": 0.9025209760749257,
+                "creation_time": 1788775880.4095428,
                 "auxillary_file_paths": [
-                    "results\\Stage3\\RobotBrain\\RobotBrain-399263.pt"
+                    "results\\Stage3\\RobotBrain\\RobotBrain-346087.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 399263,
+            "steps": 346087,
             "file_path": "results\\Stage3\\RobotBrain.onnx",
-            "reward": 0.8335414352667266,
-            "creation_time": 1788770894.0371687,
+            "reward": 0.9025209760749257,
+            "creation_time": 1788775880.4095428,
             "auxillary_file_paths": [
-                "results\\Stage3\\RobotBrain\\RobotBrain-399263.pt"
+                "results\\Stage3\\RobotBrain\\RobotBrain-346087.pt"
             ]
         }
     },

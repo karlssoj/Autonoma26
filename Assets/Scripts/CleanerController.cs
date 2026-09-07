@@ -6,46 +6,71 @@ using UnityEngine.InputSystem;
 
 public class CleanerController : Agent
 {
+    // Inställningar för robotens rörelse.
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 180f;
  
+    // Referenser till robotens startläge och miljö.
     private Vector3 startingPosition;
     public GameObject Trash;
+    [SerializeField] private MidWallRandomizer midWallRandomizer;
     private Quaternion startingRotation;
+    private Rigidbody body;
 
     private void Awake()
     {
+        // Spara startläget och hitta fysikkomponenten.
         startingPosition = transform.position;
         startingRotation = transform.rotation;
+        body = GetComponent<Rigidbody>();
+        MaxStep = 1000;
+
+        if (midWallRandomizer == null)
+        {
+            midWallRandomizer = GetComponent<MidWallRandomizer>();
+            if (midWallRandomizer == null)
+            {
+                midWallRandomizer = gameObject.AddComponent<MidWallRandomizer>();
+            }
+        }
     }
 
 
     public override void OnEpisodeBegin()
     {
+        // Återställ miljön när ett nytt träningsavsnitt börjar.
         Reset();
     }
 
     public void Reset()
     {
+        // Flytta tillbaka roboten och skapa en ny vägglayout.
         transform.SetPositionAndRotation(startingPosition, startingRotation);
+        if (midWallRandomizer != null)
+        {
+            midWallRandomizer.RandomizeEnvironment();
+        }
+
         Trash.GetComponent<TrashRespawn>().Respawn();
 
-        Rigidbody body = GetComponent<Rigidbody>();
         if (body != null)
         {
             body.linearVelocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;
         }
+
     }
 
     public void CollectTrash()
     {
+        // Belöna agenten när den hittar skräpet.
         AddReward(1);
         EndEpisode();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        // Avsluta avsnittet med negativ belöning vid väggkollision.
         if (collision.gameObject.CompareTag("wall"))
         {
             AddReward(-1);
@@ -53,9 +78,9 @@ public class CleanerController : Agent
         }
     }
 
-
     public override void Heuristic(in ActionBuffers actionsOut)
     {
+        // Gör det möjligt att styra roboten manuellt med tangentbordet.
         var discreteActionsOut = actionsOut.DiscreteActions;
         discreteActionsOut[0] = 0; // Movement action
         discreteActionsOut[1] = 0; // Rotation action
@@ -83,38 +108,53 @@ public class CleanerController : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        AddReward(-0.001f); // Small penalty to encourage efficiency
+        // Liten tidskostnad uppmuntrar agenten att hitta skräpet snabbt.
+        AddReward(-0.001f);
 
         int movementAction =actions.DiscreteActions[0];
         int rotationAction = actions.DiscreteActions[1];
 
-        if (Keyboard.current == null)
-        {
-            return;
-        }
-
         if (movementAction == 1) // Move forward
         {
-            transform.Translate(
-                Vector3.forward * moveSpeed * Time.deltaTime,
-                Space.Self
-            );
+            // Flytta framåt med Rigidbody när sådan finns.
+            Vector3 movement = transform.forward * moveSpeed * Time.fixedDeltaTime;
+            if (body != null)
+            {
+                body.MovePosition(body.position + movement);
+            }
+            else
+            {
+                transform.position += movement;
+            }
         }
 
         if (rotationAction == 1) // Rotate left  
         {
-            transform.Rotate(
-                Vector3.up * -rotationSpeed * Time.deltaTime,
-                Space.Self
-            );
+            // Rotera enligt agentens val.
+            Rotate(-rotationSpeed * Time.fixedDeltaTime);
         }
         else if (rotationAction == 2)
         {
-            transform.Rotate(
-                Vector3.up * rotationSpeed * Time.deltaTime,
-                Space.Self
-            );
-        }    
+            Rotate(rotationSpeed * Time.fixedDeltaTime);
+        }
+
+    }
+
+    private void Rotate(float degrees)
+    {
+        // Rotera fysikobjektet på ett stabilt sätt.
+        Quaternion rotation = body != null
+            ? body.rotation * Quaternion.Euler(0f, degrees, 0f)
+            : transform.rotation * Quaternion.Euler(0f, degrees, 0f);
+
+        if (body != null)
+        {
+            body.MoveRotation(rotation);
+        }
+        else
+        {
+            transform.rotation = rotation;
+        }
     }
 
 }
