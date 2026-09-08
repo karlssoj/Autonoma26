@@ -50,12 +50,6 @@ public class CleanerController : Agent
 
     }
 
-    public void CollectTrash()
-    {
-        // Belöna agenten när den hittar skräpet.
-        AddReward(1);
-        EndEpisode();
-    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -66,19 +60,22 @@ public class CleanerController : Agent
             Debug.Log("Robot collided with wall, ending episode!!!");
             EndEpisode();
         }
-
-        if (collision.gameObject.name == "ChargeConnector")
-        {
-            AddReward(1);
-            Debug.Log("Robot connected to charge connector, ending episode!!!");
-            EndEpisode();
-        }
     }
+
+    public void Docked()
+    {
+        // Belöna agenten när den ansluter till laddningskontakten.
+        AddReward(1);
+        Debug.Log("Robot connected to charge connector, ending episode!!!");
+        EndEpisode();
+    }
+
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         // Gör det möjligt att styra roboten manuellt med tangentbordet.
         var discreteActionsOut = actionsOut.DiscreteActions;
+
         discreteActionsOut[0] = 0; // Movement action
         discreteActionsOut[1] = 0; // Rotation action
 
@@ -87,16 +84,16 @@ public class CleanerController : Agent
             return;
         }
 
-        if (Keyboard.current.wKey.isPressed)
+        if (Keyboard.current.upArrowKey.isPressed)
         {
             discreteActionsOut[0] = 1; // Move forward
         }
 
-        if (Keyboard.current.aKey.isPressed)
+        if (Keyboard.current.leftArrowKey.isPressed)
         {
             discreteActionsOut[1] = 1; // Rotate left
         }
-        else if (Keyboard.current.dKey.isPressed)
+        else if (Keyboard.current.rightArrowKey.isPressed)
         {
             discreteActionsOut[1] = 2; // Rotate right
         }
@@ -108,7 +105,7 @@ public class CleanerController : Agent
         // Liten tidskostnad uppmuntrar agenten att hitta skräpet snabbt.
         AddReward(-0.001f);
 
-        int movementAction =actions.DiscreteActions[0];
+        int movementAction = actions.DiscreteActions[0];
         int rotationAction = actions.DiscreteActions[1];
 
         if (movementAction == 1) // Move forward
@@ -130,7 +127,7 @@ public class CleanerController : Agent
             // Rotera enligt agentens val.
             Rotate(-rotationSpeed * Time.fixedDeltaTime);
         }
-        else if (rotationAction == 2)
+        else if (rotationAction == 2) // Rotate right
         {
             Rotate(rotationSpeed * Time.fixedDeltaTime);
         }
