@@ -152,7 +152,7 @@ Transform:
   m_GameObject: {fileID: 264798894}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.39181, y: 0.333, z: -4.42348}
+  m_LocalPosition: {x: 0.39181, y: 0.298, z: -4.42348}
   m_LocalScale: {x: 1.015, y: 0.286, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -882,7 +882,7 @@ GameObject:
   - component: {fileID: 705136157}
   - component: {fileID: 705136156}
   m_Layer: 0
-  m_Name: Trash
+  m_Name: DockingStation
   m_TagString: trash
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -896,13 +896,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705136154}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.67881, y: 0.159, z: -2.16907}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -4.131, y: 0.378, z: -3.524}
+  m_LocalScale: {x: 0.15622438, y: 0.15767449, z: 0.29970002}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1428555114}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!54 &705136156
 Rigidbody:
   m_ObjectHideFlags: 0

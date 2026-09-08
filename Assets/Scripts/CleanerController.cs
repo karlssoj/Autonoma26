@@ -13,7 +13,6 @@ public class CleanerController : Agent
     // Referenser till robotens startläge och miljö.
     private Vector3 startingPosition;
     public GameObject Trash;
-    [SerializeField] private MidWallRandomizer midWallRandomizer;
     private Quaternion startingRotation;
     private Rigidbody body;
 
@@ -24,15 +23,6 @@ public class CleanerController : Agent
         startingRotation = transform.rotation;
         body = GetComponent<Rigidbody>();
         MaxStep = 1000;
-
-        if (midWallRandomizer == null)
-        {
-            midWallRandomizer = GetComponent<MidWallRandomizer>();
-            if (midWallRandomizer == null)
-            {
-                midWallRandomizer = gameObject.AddComponent<MidWallRandomizer>();
-            }
-        }
     }
 
 
@@ -46,13 +36,12 @@ public class CleanerController : Agent
     {
         // Flytta tillbaka roboten och skapa en ny vägglayout.
         transform.SetPositionAndRotation(startingPosition, startingRotation);
-        if (midWallRandomizer != null)
+
+        foreach (MidWallRandomizer midWall in FindObjectsOfType<MidWallRandomizer>())
         {
-            midWallRandomizer.RandomizeEnvironment();
+            midWall.RandomizePosition();
         }
-
-        Trash.GetComponent<TrashRespawn>().Respawn();
-
+    
         if (body != null)
         {
             body.linearVelocity = Vector3.zero;
@@ -74,6 +63,14 @@ public class CleanerController : Agent
         if (collision.gameObject.CompareTag("wall"))
         {
             AddReward(-1);
+            Debug.Log("Robot collided with wall, ending episode!!!");
+            EndEpisode();
+        }
+
+        if (collision.gameObject.name == "ChargeConnector")
+        {
+            AddReward(1);
+            Debug.Log("Robot connected to charge connector, ending episode!!!");
             EndEpisode();
         }
     }
