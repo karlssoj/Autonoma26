@@ -78,6 +78,15 @@ public class CleanerController : Agent
     }
 
 
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        // Lägg till robotens position och rotation som observationer.
+        sensor.AddObservation(Nose.transform.position);
+        sensor.AddObservation(CargePoint.transform.position);
+        sensor.AddObservation(transform.position);
+        sensor.AddObservation(transform.rotation);
+    }
+
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
