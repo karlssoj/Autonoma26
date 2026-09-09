@@ -1,5 +1,6 @@
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,12 +10,18 @@ public class CleanerController : Agent
     // Inställningar för robotens rörelse.
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 180f;
+
+
+    public float MaxForce = 0;
+    public float MaxSpeed = 0;
  
     // Referenser till robotens startläge och miljö.
     private Vector3 startingPosition;
     public GameObject Trash;
     private Quaternion startingRotation;
     private Rigidbody body;
+    public GameObject Nose;
+    public GameObject CargePoint;
 
     private void Awake()
     {
@@ -71,13 +78,15 @@ public class CleanerController : Agent
     }
 
 
+
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         // Gör det möjligt att styra roboten manuellt med tangentbordet.
         var discreteActionsOut = actionsOut.DiscreteActions;
+        var continuousActionsOut = actionsOut.ContinuousActions;
 
-        discreteActionsOut[0] = 0; // Movement action
-        discreteActionsOut[1] = 0; // Rotation action
+        continuousActionsOut[0] = 0; // Movement action
+        discreteActionsOut[0] = 0; // Rotation action
 
         if (Keyboard.current == null)
         {
@@ -86,16 +95,21 @@ public class CleanerController : Agent
 
         if (Keyboard.current.upArrowKey.isPressed)
         {
-            discreteActionsOut[0] = 1; // Move forward
+            continuousActionsOut[0] = 1.0f; // Move forward
+        }
+
+        else if (Keyboard.current.downArrowKey.isPressed)
+        {
+            continuousActionsOut[0] = -1.0f; // Move backward
         }
 
         if (Keyboard.current.leftArrowKey.isPressed)
         {
-            discreteActionsOut[1] = 1; // Rotate left
+            discreteActionsOut[0] = 1; // Rotate left
         }
         else if (Keyboard.current.rightArrowKey.isPressed)
         {
-            discreteActionsOut[1] = 2; // Rotate right
+            discreteActionsOut[0] = 2; // Rotate right
         }
     }
 
@@ -105,22 +119,17 @@ public class CleanerController : Agent
         // Liten tidskostnad uppmuntrar agenten att hitta skräpet snabbt.
         AddReward(-0.001f);
 
-        int movementAction = actions.DiscreteActions[0];
-        int rotationAction = actions.DiscreteActions[1];
+        float movementAction = actions.ContinuousActions[0];
+        int rotationAction = actions.DiscreteActions[0];
 
-        if (movementAction == 1) // Move forward
+
+        if(body.linearVelocity.magnitude < MaxSpeed)
         {
-            // Flytta framåt med Rigidbody när sådan finns.
-            Vector3 movement = transform.forward * moveSpeed * Time.fixedDeltaTime;
-            if (body != null)
-            {
-                body.MovePosition(body.position + movement);
-            }
-            else
-            {
-                transform.position += movement;
-            }
+            body.AddRelativeForce(0, 0, movementAction * MaxForce);
         }
+
+        Vector3 forwardVelocity = Vector3.Project(body.linearVelocity, transform.forward);
+        body.linearVelocity = forwardVelocity;
 
         if (rotationAction == 1) // Rotate left  
         {
