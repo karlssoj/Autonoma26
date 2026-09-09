@@ -1,0 +1,20 @@
+{
+    "RobotBrain": {
+        "checkpoints": [
+            {
+                "steps": 34283,
+                "file_path": "results\\Stage\\RobotBrain\\RobotBrain-34283.onnx",
+                "reward": -1.0774445003933377,
+                "creation_time": 1788943896.084661,
+                "auxillary_file_paths": [
+                    "results\\Stage\\RobotBrain\\RobotBrain-34283.pt"
+                ]
+            }
+        ]
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.1.1+cpu"
+    }
+}

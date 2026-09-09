@@ -152,7 +152,7 @@ Transform:
   m_GameObject: {fileID: 264798894}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 3.79, y: 0.298, z: 3.8}
+  m_LocalPosition: {x: -1.18, y: 0.298, z: -3.58}
   m_LocalScale: {x: 1.015, y: 0.286, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
   m_BrainParameters:
-    VectorObservationSize: 3
+    VectorObservationSize: 13
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 1
