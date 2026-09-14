@@ -10,6 +10,7 @@ public class CleanerController : Agent
     // Inställningar för robotens rörelse.
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 180f;
+    [SerializeField] private float distanceRewardScale = 0.01f;
 
 
     public float MaxForce = 0;
@@ -20,6 +21,7 @@ public class CleanerController : Agent
     public GameObject Trash;
     private Quaternion startingRotation;
     private Rigidbody body;
+    private float previousGoalDistance;
     public GameObject Nose;
     public GameObject CargePoint;
 
@@ -29,7 +31,6 @@ public class CleanerController : Agent
         startingPosition = transform.position;
         startingRotation = transform.rotation;
         body = GetComponent<Rigidbody>();
-        MaxStep = 1000;
     }
 
 
@@ -37,6 +38,7 @@ public class CleanerController : Agent
     {
         // Återställ miljön när ett nytt träningsavsnitt börjar.
         Reset();
+        previousGoalDistance = GoalDistance();
     }
 
     public void Reset()
@@ -44,7 +46,7 @@ public class CleanerController : Agent
         // Flytta tillbaka roboten och skapa en ny vägglayout.
         transform.SetPositionAndRotation(startingPosition, startingRotation);
 
-        foreach (MidWallRandomizer midWall in FindObjectsOfType<MidWallRandomizer>())
+        foreach (MidWallRandomizer midWall in transform.parent.GetComponentsInChildren<MidWallRandomizer>())
         {
             midWall.RandomizePosition();
         }
@@ -80,11 +82,9 @@ public class CleanerController : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Lägg till robotens position och rotation som observationer.
-        sensor.AddObservation(Nose.transform.position);
-        sensor.AddObservation(CargePoint.transform.position);
-        sensor.AddObservation(transform.position);
-        sensor.AddObservation(transform.rotation);
+        Vector3 relativeGoal = transform.InverseTransformDirection(CargePoint.transform.position - Nose.transform.position);
+        sensor.AddObservation(relativeGoal);
+        sensor.AddObservation(transform.InverseTransformDirection(body.linearVelocity));
     }
 
 
@@ -125,8 +125,13 @@ public class CleanerController : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        // Liten tidskostnad uppmuntrar agenten att hitta skräpet snabbt.
-        AddReward(-0.001f);
+        // Varje beslut kostar belöning: stillastående ger -0.001, maximal hastighet ger -0.0001,
+        // och hastigheter däremellan får en linjärt interpolerad kostnad. Clamp håller värdet 0-1.
+        float normalizedSpeed = MaxSpeed > 0f
+            ? Mathf.Clamp01(body.linearVelocity.magnitude / MaxSpeed)
+            : 0f;
+        float movementCost = Mathf.Lerp(-0.001f, -0.0001f, normalizedSpeed);
+        AddReward(movementCost);
 
         float movementAction = actions.ContinuousActions[0];
         int rotationAction = actions.DiscreteActions[0];
@@ -150,6 +155,15 @@ public class CleanerController : Agent
             Rotate(rotationSpeed * Time.fixedDeltaTime);
         }
 
+        float currentGoalDistance = GoalDistance();
+        AddReward((previousGoalDistance - currentGoalDistance) * distanceRewardScale);
+        previousGoalDistance = currentGoalDistance;
+
+    }
+
+    private float GoalDistance()
+    {
+        return Vector3.Distance(Nose.transform.position, CargePoint.transform.position);
     }
 
     private void Rotate(float degrees)

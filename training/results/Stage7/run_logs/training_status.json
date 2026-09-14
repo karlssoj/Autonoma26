@@ -1,0 +1,29 @@
+{
+    "RobotBrain": {
+        "checkpoints": [
+            {
+                "steps": 223291,
+                "file_path": "results\\Stage7\\RobotBrain\\RobotBrain-223291.onnx",
+                "reward": 1.694701905644268,
+                "creation_time": 1789406061.2645411,
+                "auxillary_file_paths": [
+                    "results\\Stage7\\RobotBrain\\RobotBrain-223291.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 223291,
+            "file_path": "results\\Stage7\\RobotBrain.onnx",
+            "reward": 1.694701905644268,
+            "creation_time": 1789406061.2645411,
+            "auxillary_file_paths": [
+                "results\\Stage7\\RobotBrain\\RobotBrain-223291.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.1.1+cpu"
+    }
+}

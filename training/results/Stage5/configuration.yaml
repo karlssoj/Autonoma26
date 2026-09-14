@@ -37,7 +37,7 @@ behaviors:
           memory: null
           goal_conditioning_type: hyper
           deterministic: false
-    init_path: null
+    init_path: results\Stage4\RobotBrain\checkpoint.pt
     keep_checkpoints: 5
     even_checkpoints: false
     max_steps: 500000
@@ -61,15 +61,15 @@ engine_settings:
   width: 84
   height: 84
   quality_level: 5
-  time_scale: 20
+  time_scale: 20.0
   target_frame_rate: -1
   capture_frame_rate: 60
   no_graphics: false
   no_graphics_monitor: false
 environment_parameters: null
 checkpoint_settings:
-  run_id: Test2
-  initialize_from: null
+  run_id: Stage5
+  initialize_from: Stage4
   load_model: false
   resume: false
   force: false
