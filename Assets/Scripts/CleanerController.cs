@@ -82,8 +82,18 @@ public class CleanerController : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        // Först räknas en pil från robotens nos till dockningspunkten ut.
+        // InverseTransformDirection omvandlar sedan pilen från världens koordinater
+        // till robotens egna koordinater. Positiv x betyder då alltid "åt höger"
+        // och positiv z betyder "framåt" sett från roboten.
+        // På så sätt behöver agenten inte veta åt vilket håll roboten pekar i världen.
+        // Samma situation ger samma observation även om roboten har vänt sig.
         Vector3 relativeGoal = transform.InverseTransformDirection(CargePoint.transform.position - Nose.transform.position);
         sensor.AddObservation(relativeGoal);
+
+        // Hastigheten omvandlas också till robotens koordinater. Agenten kan därför
+        // skilja på att köra framåt, bakåt eller åt sidan utan att känna till sin
+        // absoluta rotation i världen.
         sensor.AddObservation(transform.InverseTransformDirection(body.linearVelocity));
     }
 
