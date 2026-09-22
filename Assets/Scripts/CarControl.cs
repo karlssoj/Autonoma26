@@ -125,6 +125,9 @@ public class CarControl : Agent
         AddReward(-0.00001f * DistanceTotMeetingPoint()); // Small penalty for each step to encourage faster completion
 
 
+        if(rb.linearVelocity.z < 0)
+            AddReward(-0.001f);
+
         if(transform.position.y < -1.0f)
         {
             AddReward(-1.0f); // Punishment for falling off the track
