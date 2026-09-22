@@ -1,0 +1,29 @@
+{
+    "RoverBrain": {
+        "checkpoints": [
+            {
+                "steps": 480872,
+                "file_path": "results\\Step2\\RoverBrain\\RoverBrain-480872.onnx",
+                "reward": 5.214616023004055,
+                "creation_time": 1790007090.7473555,
+                "auxillary_file_paths": [
+                    "results\\Step2\\RoverBrain\\RoverBrain-480872.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 480872,
+            "file_path": "results\\Step2\\RoverBrain.onnx",
+            "reward": 5.214616023004055,
+            "creation_time": 1790007090.7473555,
+            "auxillary_file_paths": [
+                "results\\Step2\\RoverBrain\\RoverBrain-480872.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.1.1+cpu"
+    }
+}
